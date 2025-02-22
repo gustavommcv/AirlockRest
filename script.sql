@@ -4,8 +4,8 @@ CREATE DATABASE Airlock;
 -- Connect to the database
 USE Airlock;
 
--- Table Amenitie (Amenities)
-CREATE TABLE Amenitie (
+-- Table Amenity (Amenities)
+CREATE TABLE Amenity (
     id CHAR(36) PRIMARY KEY, -- Unique identifier for the amenity (UUID should be generated in backend or during insertion)
     category VARCHAR(30) NOT NULL, -- Category of the amenity (ex: "Space Survival", "Outdoors")
     name VARCHAR(30) NOT NULL -- Name of the amenity (ex: "SOS button", "Meteor showers")
@@ -20,6 +20,10 @@ CREATE TABLE User (
     role ENUM('host', 'guest') NOT NULL, -- Role defines if the user can create listings
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Timestamp when user is created
 );
+
+-- Indexes for User table
+CREATE INDEX idx_user_email ON User(email);
+CREATE INDEX idx_user_username ON User(username);
 
 -- Table Listing (Listings)
 CREATE TABLE Listing (
@@ -38,25 +42,29 @@ CREATE TABLE Listing (
     FOREIGN KEY (hostId) REFERENCES User(id) ON DELETE CASCADE -- Ensure hostId is a valid User
 );
 
--- Table Listing_Amenities (Many-to-Many Relationship)
-CREATE TABLE Listing_Amenities (
+-- Index for Listing table
+CREATE INDEX idx_listing_hostId ON Listing(hostId);
+
+-- Table Listing_Amenity (Many-to-Many Relationship)
+CREATE TABLE Listing_Amenity (
     listingId CHAR(36) NOT NULL, -- Foreign key referencing Listing
-    amenitieId CHAR(36) NOT NULL, -- Foreign key referencing Amenitie
+    amenityId CHAR(36) NOT NULL, -- Foreign key referencing Amenity
 
     -- Composite primary key ensures a listing can't have duplicate amenities
-    PRIMARY KEY (listingId, amenitieId),
+    PRIMARY KEY (listingId, amenityId),
 
     -- Foreign key constraint for listingId
     FOREIGN KEY (listingId) REFERENCES Listing(id) ON DELETE CASCADE,
 
-    -- Foreign key constraint for amenitieId
-    FOREIGN KEY (amenitieId) REFERENCES Amenitie(id) ON DELETE CASCADE
+    -- Foreign key constraint for amenityId
+    FOREIGN KEY (amenityId) REFERENCES Amenity(id) ON DELETE CASCADE
 );
 
 -- Table Favorites (Users can favorite listings)
 CREATE TABLE Favorites (
     userId CHAR(36) NOT NULL, -- Foreign key referencing User
     listingId CHAR(36) NOT NULL, -- Foreign key referencing Listing
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp when the favorite was created
     
     -- Composite primary key ensures a user can only favorite a listing once
     PRIMARY KEY (userId, listingId),

@@ -76,7 +76,7 @@ export class authController {
     const { username, email, password, role } = matchedData(request);
 
     try {
-      const userResponse = this.userService.register(
+      const userResponse = await this.userService.register(
         new userDtoRequest(password, username, email, role)
       );
 
