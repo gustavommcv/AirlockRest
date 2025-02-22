@@ -2,7 +2,8 @@
 
 This project is a clone of an API for a fictitious website that is part of a crash course on Apollo Server and GraphQL. The original REST API was refactored to follow Clean Architecture principles and TDD (Test-Driven Development), using TypeScript, Express, Node.js, ESLint, Jest, MariaDB, Bcrypt, and JWT.
 
-**Navigation:**
+![image](https://github.com/user-attachments/assets/470a1d09-1035-41cc-9c71-22e0eda9cad9)
+
 - [🚀 Technologies](#-technologies)
 - [📂 Project Structure](#-project-structure)
 - [🛠️ How to Run the Project](#️-how-to-run-the-project)
@@ -12,7 +13,6 @@ This project is a clone of an API for a fictitious website that is part of a cra
 - [🧪 Tests](#-tests)
 - [📝 License](#-license)
 - [🙌 Contributing](#-contributing)
-
 
 ## 🚀 Technologies
 
