@@ -6,6 +6,7 @@ import UserRepository from "../../infrastructure/repositories/UserRepository";
 import { userDtoRequest } from "../dtos/userDtoRequest";
 import { userDtoResponse } from "../dtos/userDtoResponse";
 import { CustomError } from "../../shared/errors/CustomError";
+import hashPassword from "../../infrastructure/utils/hashPassword";
 
 export class UserService implements IUserService {
   private userRepository: IUserRepository;
@@ -38,7 +39,17 @@ export class UserService implements IUserService {
   }
 
   async register(user: userDtoRequest): Promise<userDtoResponse> {
-    throw new Error("Method not implemented.");
+    const existingUser = await this.userRepository.findByEmail(user.email);
+
+    if (existingUser) {
+      throw new CustomError("User already signed up", 409);
+    }
+
+    user.password = await hashPassword(user.password);
+
+    const createdUser = await this.userRepository.create(user);
+
+    return createdUser;
   }
 
   async findById(id: string): Promise<userDtoResponse | null> {

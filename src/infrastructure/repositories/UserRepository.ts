@@ -2,6 +2,8 @@ import { ModelStatic } from "sequelize";
 import { IUser } from "../../domain/entities/IUser";
 import { IUserRepository } from "../../domain/respositoryContracts/IUserRepository";
 import User from "../database/models/User";
+import { userDtoRequest } from "../../application/dtos/userDtoRequest";
+import { userDtoResponse } from "../../application/dtos/userDtoResponse";
 
 export default class UserRepository implements IUserRepository {
   private userModel: ModelStatic<IUser>;
@@ -32,8 +34,22 @@ export default class UserRepository implements IUserRepository {
     return users;
   }
 
-  async create(user: IUser): Promise<void> {
-    throw new Error("Method not implemented.");
+  async create(user: userDtoRequest): Promise<userDtoResponse> {
+    try {
+      const createdUser = await this.userModel.create({
+        ...user,
+      });
+
+      return new userDtoResponse(
+        createdUser.id,
+        createdUser.username,
+        createdUser.email,
+        createdUser.role
+      );
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   async edit(user: IUser): Promise<IUser> {

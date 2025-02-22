@@ -1,3 +1,5 @@
+import { userDtoRequest } from "../../application/dtos/userDtoRequest";
+import { userDtoResponse } from "../../application/dtos/userDtoResponse";
 import { IUser } from "../entities/IUser";
 
 export interface IUserRepository {
@@ -11,7 +13,7 @@ export interface IUserRepository {
   getAll(): Promise<IUser[] | null>;
 
   // Create a user
-  create(user: IUser): Promise<void>;
+  create(user: userDtoRequest): Promise<userDtoResponse>;
 
   // Edit a user
   edit(user: IUser): Promise<IUser>;

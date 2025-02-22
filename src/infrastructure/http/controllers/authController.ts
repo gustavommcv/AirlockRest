@@ -13,13 +13,14 @@ export class authController {
   }
 
   public async login(request: Request, response: Response) {
-    const { email, password } = matchedData(request);
     const cookies = request.cookies;
 
     if (cookies.jwtToken) {
       response.status(400).json({ message: "Already logged in" });
       return;
     }
+
+    const { email, password } = matchedData(request);
 
     try {
       const foundUser = await this.userService.login(email, password);
@@ -82,7 +83,10 @@ export class authController {
 
       response.json({ message: "User has been created", user: userResponse });
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof CustomError) {
+        response.status(error.status).json({ message: error.message });
+        return;
+      } else if (error instanceof Error) {
         response.status(500).json({ message: error.message });
         return;
       } else {
