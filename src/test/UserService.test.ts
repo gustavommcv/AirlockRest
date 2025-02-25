@@ -22,6 +22,7 @@ describe("UserService", () => {
       create: jest.fn(),
       findByEmail: jest.fn(),
       findById: jest.fn(),
+      getAll: jest.fn(),
     } as unknown as jest.Mocked<UserRepository>;
 
     userService = new UserService(mockUserRepository);
@@ -168,5 +169,40 @@ describe("UserService", () => {
 
   afterAll(async () => {
     await sequelize.close();
+  });
+
+  it("Get all - should return an array of userDtoResponse", async () => {
+    const user1 = {
+      id: "1234",
+      username: "Jonas",
+      email: "jonas@mail.com",
+      password: "12345",
+      role: "guest",
+    } as IUser;
+
+    const usersResponse = [user1];
+
+    mockUserRepository.getAll.mockResolvedValue(usersResponse);
+
+    const result = await userService.getAll();
+
+    expect(Array.isArray(result)).toBe(true);
+
+    expect(mockUserRepository.getAll).toHaveBeenCalled();
+
+    expect(mockUserRepository.getAll).toHaveBeenCalledTimes(1);
+
+    expect(result).not.toBeNull();
+
+    if (result != null) {
+      expect(result[0]).toMatchObject({
+        id: user1.id,
+        username: user1.username,
+        email: user1.email,
+        role: user1.role,
+      });
+
+      expect(result[0]).not.toHaveProperty("password");
+    }
   });
 });
