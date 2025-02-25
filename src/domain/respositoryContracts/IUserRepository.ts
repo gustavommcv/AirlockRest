@@ -4,7 +4,7 @@ import { IUser } from "../entities/IUser";
 
 export interface IUserRepository {
   // Find a user by Id
-  findbyId(id: string): Promise<IUser | null>;
+  findById(id: string): Promise<IUser | null>;
 
   // Find a user by email
   findByEmail(email: string): Promise<IUser | null>;

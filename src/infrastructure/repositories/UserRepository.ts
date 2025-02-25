@@ -22,7 +22,7 @@ export default class UserRepository implements IUserRepository {
     return user;
   }
 
-  async findbyId(id: string): Promise<IUser | null> {
+  async findById(id: string): Promise<IUser | null> {
     const user = await this.userModel.findByPk(id);
 
     return user;

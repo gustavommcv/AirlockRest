@@ -53,7 +53,7 @@ export class UserService implements IUserService {
   }
 
   async findById(id: string): Promise<userDtoResponse | null> {
-    const user = await this.userRepository.findbyId(id);
+    const user = await this.userRepository.findById(id);
 
     if (!user) return null;
 
