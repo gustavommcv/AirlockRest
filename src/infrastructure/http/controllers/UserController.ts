@@ -1,13 +1,11 @@
 import { Request, Response } from "express";
 import { IUserService } from "../../../domain/serviceContracts/IUserService";
 import { matchedData } from "express-validator";
+import { inject, injectable } from "tsyringe";
 
-export class userController {
-  private userService: IUserService;
-
-  constructor(userService: IUserService) {
-    this.userService = userService;
-  }
+@injectable()
+export default class UserController {
+  constructor(@inject("IUserService") private userService: IUserService) {}
 
   public async getUsers(request: Request, response: Response) {
     try {

@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { authController } from "../controllers/authController";
-import { UserService } from "../../../application/services/UserService";
 import { body } from "express-validator";
 import validationErrors from "../middlewares/validationsErrors";
+import { container } from "tsyringe";
+import AuthController from "../controllers/AuthController";
 
 const authRouter = Router();
-const authControllerInstance = new authController(new UserService());
+const authControllerInstance =
+  container.resolve<AuthController>("AuthController");
 
 authRouter.post(
   "/login",

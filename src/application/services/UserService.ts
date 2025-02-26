@@ -2,18 +2,17 @@ import bcrypt from "bcrypt";
 
 import { IUserRepository } from "../../domain/respositoryContracts/IUserRepository";
 import { IUserService } from "../../domain/serviceContracts/IUserService";
-import UserRepository from "../../infrastructure/repositories/UserRepository";
 import { userDtoRequest } from "../dtos/userDtoRequest";
 import { userDtoResponse } from "../dtos/userDtoResponse";
 import { CustomError } from "../../shared/errors/CustomError";
 import hashPassword from "../../infrastructure/utils/hashPassword";
+import { inject, injectable } from "tsyringe";
 
+@injectable()
 export class UserService implements IUserService {
-  private userRepository: IUserRepository;
-
-  constructor(userRepository: IUserRepository = new UserRepository()) {
-    this.userRepository = userRepository;
-  }
+  constructor(
+    @inject("IUserRepository") private userRepository: IUserRepository
+  ) {}
 
   async login(email: string, password: string): Promise<userDtoResponse> {
     const existingUser = await this.userRepository.findByEmail(email);

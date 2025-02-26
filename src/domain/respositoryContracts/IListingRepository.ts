@@ -1,18 +1,16 @@
 import listingDtoResponse from "../../application/dtos/listingDtoResponse";
 
-export default interface IListingRepository {
-  // Find a listing by id
+export interface IListingReader {
   findById(id: string): Promise<listingDtoResponse | null>;
-
-  // Get all listings
   getAll(): Promise<listingDtoResponse[]>;
+}
 
-  // Create a listing
+export interface IListingWriter {
   create(): Promise<listingDtoResponse>;
-
-  // Edit a listing
   edit(): Promise<listingDtoResponse>;
-
-  // Delete a listing
   delete(id: string): Promise<void>;
 }
+
+export default interface IListingRepository
+  extends IListingReader,
+    IListingWriter {}

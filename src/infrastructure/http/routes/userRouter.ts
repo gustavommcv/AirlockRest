@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { param } from "express-validator";
-import { userController } from "../controllers/userController";
 import validationErrors from "../middlewares/validationsErrors";
-import { UserService } from "../../../application/services/UserService";
+import { container } from "tsyringe";
+import UserController from "../controllers/UserController";
 
 const userRouter = Router();
-const userControllerInstance = new userController(new UserService());
+const userControllerInstance =
+  container.resolve<UserController>("UserController");
 
 userRouter.get(
   "/:userId",

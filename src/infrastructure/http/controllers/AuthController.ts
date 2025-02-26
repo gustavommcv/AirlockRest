@@ -4,13 +4,11 @@ import { Request, Response } from "express";
 import generateToken from "../../utils/generateToken";
 import { CustomError } from "../../../shared/errors/CustomError";
 import { userDtoRequest } from "../../../application/dtos/userDtoRequest";
+import { inject, injectable } from "tsyringe";
 
-export class authController {
-  private userService: IUserService;
-
-  constructor(userService: IUserService) {
-    this.userService = userService;
-  }
+@injectable()
+export default class AuthController {
+  constructor(@inject("IUserService") private userService: IUserService) {}
 
   public async login(request: Request, response: Response) {
     const cookies = request.cookies;
