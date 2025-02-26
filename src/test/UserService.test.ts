@@ -3,7 +3,6 @@ import UserRepository from "../infrastructure/repositories/UserRepository";
 import { userDtoRequest } from "../application/dtos/userDtoRequest";
 import { userDtoResponse } from "../application/dtos/userDtoResponse";
 import { v4 as uuidv4 } from "uuid";
-import sequelize from "../infrastructure/database/connection";
 import { IUser } from "../domain/entities/IUser";
 import bcrypt from "bcrypt";
 
@@ -12,10 +11,6 @@ jest.mock("bcrypt");
 describe("UserService", () => {
   let userService: UserService;
   let mockUserRepository: jest.Mocked<UserRepository>;
-
-  beforeAll(async () => {
-    await sequelize.authenticate();
-  });
 
   beforeEach(() => {
     mockUserRepository = {
@@ -26,10 +21,6 @@ describe("UserService", () => {
     } as unknown as jest.Mocked<UserRepository>;
 
     userService = new UserService(mockUserRepository);
-  });
-
-  afterAll(async () => {
-    await sequelize.close();
   });
 
   describe("Login", () => {
@@ -109,7 +100,7 @@ describe("UserService", () => {
         username: "John Doe",
         email: "john@example.com",
         role: "guest",
-      } as userDtoResponse; // Retorna um userDtoResponse
+      } as userDtoResponse;
 
       const expectedUserDtoResponse = new userDtoResponse(
         mockUserId,

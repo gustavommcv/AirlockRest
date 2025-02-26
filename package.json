@@ -5,7 +5,9 @@
   "scripts": {
     "test": "jest --verbose --detectOpenHandles --coverage",
     "dev": "tsx watch ./src/app.ts",
-    "users-seed": "tsx ./src/infrastructure/database/seeds/seedUsers.ts"
+    "seedUsers": "tsx ./src/infrastructure/database/seeds/seedUsers.ts",
+    "seedAmenities": "tsx ./src/infrastructure/database/seeds/seedAmenities.ts",
+    "seedListings": "tsx ./src/infrastructure/database/seeds/seedListings.ts"
   },
   "keywords": [],
   "author": "",

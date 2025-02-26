@@ -4,7 +4,6 @@ import User from "../infrastructure/database/models/User";
 import { IUser } from "../domain/entities/IUser";
 import { userDtoRequest } from "../application/dtos/userDtoRequest";
 import { userDtoResponse } from "../application/dtos/userDtoResponse";
-import sequelize from "../infrastructure/database/connection";
 
 jest.mock("../infrastructure/database/models/User");
 
@@ -12,18 +11,10 @@ describe("UserRepository", () => {
   let userRepository: UserRepository;
   let mockUserModel: jest.Mocked<ModelStatic<IUser>>;
 
-  beforeAll(async () => {
-    await sequelize.authenticate();
-  });
-
   beforeEach(() => {
     mockUserModel = User as jest.Mocked<ModelStatic<IUser>>;
     userRepository = new UserRepository(mockUserModel);
     jest.spyOn(console, "error").mockImplementation(() => {});
-  });
-
-  afterAll(async () => {
-    await sequelize.close();
   });
 
   describe("Queries", () => {

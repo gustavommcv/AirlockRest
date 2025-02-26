@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
 import sequelize from "../connection";
 import User from "../models/User";
@@ -12,7 +11,7 @@ const seedUsers = async () => {
 
     await User.bulkCreate([
       {
-        id: uuidv4(),
+        id: "a1e3c60a-f92b-4bea-9b77-9afc22738e3f",
         username: "space_host",
         email: "host@airlock.com",
         password: password1,
@@ -20,7 +19,7 @@ const seedUsers = async () => {
         createdAt: new Date(),
       },
       {
-        id: uuidv4(),
+        id: "b2f93a99-682e-4c32-bafb-fc9d8b837b8e",
         username: "cosmic_guest",
         email: "guest@airlock.com",
         password: password2,

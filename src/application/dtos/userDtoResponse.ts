@@ -8,7 +8,8 @@ export class userDtoResponse {
     id: string | undefined,
     username: string,
     email: string,
-    role: string) {
+    role: string
+  ) {
     this.id = id;
     this.username = username;
     this.email = email;

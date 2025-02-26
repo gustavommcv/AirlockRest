@@ -18,7 +18,8 @@ CREATE TABLE User (
     email VARCHAR(100) UNIQUE NOT NULL, -- Email (must be unique)
     password VARCHAR(255) NOT NULL, -- Hashed password for security
     role ENUM('host', 'guest') NOT NULL, -- Role defines if the user can create listings
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Timestamp when user is created
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp when user is created
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Timestamp when user is last updated
 );
 
 -- Indexes for User table
@@ -39,7 +40,9 @@ CREATE TABLE Listing (
     longitude DECIMAL(9, 6), -- Longitude of the location
     closedForBookings BOOLEAN DEFAULT FALSE, -- Whether the listing is closed for bookings
     hostId CHAR(36) NOT NULL, -- User who created the listing
-    FOREIGN KEY (hostId) REFERENCES User(id) ON DELETE CASCADE -- Ensure hostId is a valid User
+    FOREIGN KEY (hostId) REFERENCES User(id) ON DELETE CASCADE, -- Ensure hostId is a valid User
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp when the listing was created
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Timestamp when the listing was last updated
 );
 
 -- Index for Listing table
