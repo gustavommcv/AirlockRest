@@ -14,7 +14,7 @@ CREATE TABLE Amenity (
 -- Table User
 CREATE TABLE User (
     id CHAR(36) PRIMARY KEY, -- Unique identifier for the user (UUID should be generated in backend or during insertion)
-    username VARCHAR(50) UNIQUE NOT NULL, -- Username (must be unique)
+    username VARCHAR(50) NOT NULL, -- Username
     email VARCHAR(100) UNIQUE NOT NULL, -- Email (must be unique)
     password VARCHAR(255) NOT NULL, -- Hashed password for security
     role ENUM('host', 'guest') NOT NULL, -- Role defines if the user can create listings

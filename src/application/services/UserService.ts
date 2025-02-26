@@ -42,7 +42,7 @@ export class UserService implements IUserService {
     const existingUser = await this.userRepository.findByEmail(user.email);
 
     if (existingUser) {
-      throw new CustomError("User already signed up", 409);
+      throw new CustomError("Email already exists", 409);
     }
 
     user.password = await hashPassword(user.password);

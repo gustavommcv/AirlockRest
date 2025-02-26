@@ -117,7 +117,7 @@ describe("UserService", () => {
       expect(mockUserRepository.create).toHaveBeenCalledWith(userDtoRequest);
     });
 
-    it("should throw an error if the user already exists", async () => {
+    it("should throw an error if email already exists", async () => {
       const userDtoRequest: userDtoRequest = {
         username: "John Doe",
         email: "john@example.com",
@@ -126,7 +126,7 @@ describe("UserService", () => {
       };
 
       mockUserRepository.findByEmail.mockResolvedValue({
-        id: uuidv4(),
+        id: "1234",
         username: "John Doe",
         email: "john@example.com",
         password: "hashedpassword",
@@ -134,7 +134,7 @@ describe("UserService", () => {
       } as IUser);
 
       await expect(userService.register(userDtoRequest)).rejects.toThrow(
-        "User already signed up"
+        "Email already exists"
       );
     });
   });
