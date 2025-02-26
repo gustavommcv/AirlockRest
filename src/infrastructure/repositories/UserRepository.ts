@@ -1,16 +1,14 @@
+import "reflect-metadata";
 import { ModelStatic } from "sequelize";
 import { IUser } from "../../domain/entities/IUser";
 import { IUserRepository } from "../../domain/respositoryContracts/IUserRepository";
-import User from "../database/models/User";
 import { userDtoRequest } from "../../application/dtos/userDtoRequest";
 import { userDtoResponse } from "../../application/dtos/userDtoResponse";
+import { inject, injectable } from "tsyringe";
 
+@injectable()
 export default class UserRepository implements IUserRepository {
-  private userModel: ModelStatic<IUser>;
-
-  constructor(userModel: ModelStatic<IUser> = User) {
-    this.userModel = userModel;
-  }
+  constructor(@inject("UserModel") private userModel: ModelStatic<IUser>) {}
 
   async findByEmail(email: string): Promise<IUser | null> {
     const user = await this.userModel.findOne({

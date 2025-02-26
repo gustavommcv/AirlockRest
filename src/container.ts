@@ -8,12 +8,31 @@ import { IUserService } from "./domain/serviceContracts/IUserService";
 import UserRepository from "./infrastructure/repositories/UserRepository";
 import AuthController from "./infrastructure/http/controllers/AuthController";
 import UserController from "./infrastructure/http/controllers/UserController";
+import ListingController from "./infrastructure/http/controllers/ListingController";
+import { IListing } from "./domain/entities/IListing";
+import Listing from "./infrastructure/database/models/Listing";
+import IListingRepository from "./domain/respositoryContracts/IListingRepository";
+import ListingRepository from "./infrastructure/repositories/ListingRepository";
+import { IListingService } from "./domain/serviceContracts/IListingService";
+import ListingService from "./application/services/ListingService";
 
 container.register("AuthController", { useClass: AuthController });
 container.register("UserController", { useClass: UserController });
+container.register("ListingController", { useClass: ListingController });
 
 container.register<ModelStatic<IUser>>("UserModel", { useValue: User });
+container.register<ModelStatic<IListing>>("ListingModel", {
+  useValue: Listing,
+});
+
 container.register<IUserRepository>("IUserRepository", {
   useClass: UserRepository,
 });
+container.register<IListingRepository>("IListingRepository", {
+  useClass: ListingRepository,
+});
+
 container.register<IUserService>("IUserService", { useClass: UserService });
+container.register<IListingService>("IListingService", {
+  useClass: ListingService,
+});

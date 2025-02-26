@@ -1,14 +1,44 @@
+import "reflect-metadata";
 import { IListing } from "../domain/entities/IListing";
 import ListingRepository from "../infrastructure/repositories/ListingRepository";
-import Listing from "../infrastructure/database/models/Listing";
 import listingDtoResponse from "../application/dtos/listingDtoResponse";
 import { listingDtoRequest } from "../application/dtos/listingDtoRequest";
+import { Model, ModelStatic } from "sequelize";
+import { IUser } from "../domain/entities/IUser";
 
 let listingRepository: ListingRepository;
-jest.mock("../infrastructure/database/models/Listing");
+
+interface MockModelStatic<M extends Model> extends ModelStatic<M> {
+  findByPk: jest.Mock;
+  findAll: jest.Mock;
+  create: jest.Mock;
+  update: jest.Mock;
+  destroy: jest.Mock;
+}
+
+const mockListingModel: MockModelStatic<IListing> = {
+  findByPk: jest.fn(),
+  findAll: jest.fn(),
+  create: jest.fn(),
+  update: jest.fn(),
+  destroy: jest.fn(),
+  prototype: {} as IListing,
+  tableName: "Listings",
+  primaryKeyAttribute: "id",
+  primaryKeyAttributes: ["id"],
+} as unknown as MockModelStatic<IListing>;
+
+const mockUserModel: MockModelStatic<IUser> = {
+  findByPk: jest.fn(),
+  prototype: {} as IUser,
+  tableName: "Users",
+  primaryKeyAttribute: "id",
+  primaryKeyAttributes: ["id"],
+} as unknown as MockModelStatic<IUser>;
 
 beforeEach(() => {
-  listingRepository = new ListingRepository();
+  listingRepository = new ListingRepository(mockListingModel, mockUserModel);
+  jest.clearAllMocks();
 });
 
 describe("Listing Repository", () => {
@@ -33,7 +63,14 @@ describe("Listing Repository", () => {
           createdAt: new Date(),
         } as IListing;
 
-        (Listing.findByPk as jest.Mock).mockResolvedValue(sequelizeResponse);
+        const mockHost = {
+          id: "12345",
+          username: "host_user",
+          email: "host@example.com",
+        };
+
+        mockListingModel.findByPk.mockResolvedValue(sequelizeResponse);
+        mockUserModel.findByPk.mockResolvedValue(mockHost);
 
         const repositoryResponse = await listingRepository.findById(id);
 
@@ -58,7 +95,10 @@ describe("Listing Repository", () => {
         );
 
         expect(repositoryResponse).toEqual(expectedResponse);
-        expect(Listing.findByPk).toHaveBeenCalledWith(id);
+        expect(mockListingModel.findByPk).toHaveBeenCalledWith(id);
+        expect(mockUserModel.findByPk).toHaveBeenCalledWith(
+          sequelizeResponse.hostId
+        );
       });
     });
 
@@ -99,7 +139,24 @@ describe("Listing Repository", () => {
 
         const sequelizeResponse = [l1, l2];
 
-        (Listing.findAll as jest.Mock).mockResolvedValue(sequelizeResponse);
+        const mockHost1 = {
+          id: "12345",
+          username: "host_user",
+          email: "host@example.com",
+        };
+
+        const mockHost2 = {
+          id: "xyz",
+          username: "another_host",
+          email: "another@example.com",
+        };
+
+        mockListingModel.findAll.mockResolvedValue(sequelizeResponse);
+        mockUserModel.findByPk.mockImplementation((id) => {
+          if (id === "12345") return Promise.resolve(mockHost1);
+          if (id === "xyz") return Promise.resolve(mockHost2);
+          return Promise.resolve(null);
+        });
 
         const repositoryResponse = await listingRepository.getAll();
 
@@ -117,17 +174,13 @@ describe("Listing Repository", () => {
               listing.latitude || null,
               listing.longitude || null,
               listing.closedForBookings || false,
-              {
-                id: listing.hostId,
-                username: "username",
-                email: "email@example.com",
-              },
+              listing.hostId === "12345" ? mockHost1 : mockHost2,
               listing.createdAt
             )
         );
 
         expect(repositoryResponse).toEqual(expectedResponse);
-        expect(Listing.findAll).toHaveBeenCalled();
+        expect(mockListingModel.findAll).toHaveBeenCalled();
       });
     });
   });
@@ -165,13 +218,14 @@ describe("Listing Repository", () => {
           createdAt: new Date(),
         } as IListing;
 
-        (Listing.create as jest.Mock).mockResolvedValue(sequelizeResponse);
-
         const mockHost = {
           id: "12345",
           username: "host_user",
           email: "host@example.com",
         };
+
+        mockListingModel.create.mockResolvedValue(sequelizeResponse);
+        mockUserModel.findByPk.mockResolvedValue(mockHost);
 
         const expectedResponse = new listingDtoResponse(
           sequelizeResponse.id,
@@ -194,6 +248,7 @@ describe("Listing Repository", () => {
         );
 
         expect(listingRepositoryResponse).toEqual(expectedResponse);
+        expect(mockListingModel.create).toHaveBeenCalledWith(newListingRequest);
       });
     });
 
@@ -223,14 +278,15 @@ describe("Listing Repository", () => {
           createdAt: new Date(),
         } as IListing;
 
-        (Listing.update as jest.Mock).mockResolvedValue([1]);
-        (Listing.findByPk as jest.Mock).mockResolvedValue(sequelizeResponse);
-
         const mockHost = {
           id: "12345",
           username: "host_user",
           email: "host@example.com",
         };
+
+        mockListingModel.update.mockResolvedValue([1]);
+        mockListingModel.findByPk.mockResolvedValue(sequelizeResponse);
+        mockUserModel.findByPk.mockResolvedValue(mockHost);
 
         const expectedResponse = new listingDtoResponse(
           sequelizeResponse.id,
@@ -254,10 +310,10 @@ describe("Listing Repository", () => {
         );
 
         expect(repositoryResponse).toEqual(expectedResponse);
-        expect(Listing.update).toHaveBeenCalledWith(updatedData, {
+        expect(mockListingModel.update).toHaveBeenCalledWith(updatedData, {
           where: { id },
         });
-        expect(Listing.findByPk).toHaveBeenCalledWith(id);
+        expect(mockListingModel.findByPk).toHaveBeenCalledWith(id);
       });
     });
 
@@ -265,11 +321,13 @@ describe("Listing Repository", () => {
       it("Should delete a listing with no errors", async () => {
         const id = "1234";
 
-        (Listing.destroy as jest.Mock).mockResolvedValue(1);
+        mockListingModel.destroy.mockResolvedValue(1);
 
         await listingRepository.delete(id);
 
-        expect(Listing.destroy).toHaveBeenCalledWith({ where: { id } });
+        expect(mockListingModel.destroy).toHaveBeenCalledWith({
+          where: { id },
+        });
       });
     });
   });

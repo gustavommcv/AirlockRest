@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import userRouter from "./userRouter";
 import authRouter from "./authRouter";
+import listingRouter from "./listingRouter";
 
 const indexRouter = Router();
 
@@ -13,5 +14,6 @@ indexRouter.get("/", (request: Request, response: Response) => {
 
 indexRouter.use("/users", userRouter);
 indexRouter.use("/auth", authRouter);
+indexRouter.use("/listings", listingRouter);
 
 export default indexRouter;

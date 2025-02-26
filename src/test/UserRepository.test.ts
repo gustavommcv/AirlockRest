@@ -1,22 +1,41 @@
-import { ModelStatic } from "sequelize";
+import { ModelStatic, Model } from "sequelize";
 import UserRepository from "../infrastructure/repositories/UserRepository";
-import User from "../infrastructure/database/models/User";
 import { IUser } from "../domain/entities/IUser";
 import { userDtoRequest } from "../application/dtos/userDtoRequest";
 import { userDtoResponse } from "../application/dtos/userDtoResponse";
 
-jest.mock("../infrastructure/database/models/User");
+interface MockModelStatic<M extends Model> extends ModelStatic<M> {
+  findOne: jest.Mock;
+  findByPk: jest.Mock;
+  findAll: jest.Mock;
+  create: jest.Mock;
+  update: jest.Mock;
+  destroy: jest.Mock;
+}
+
+let userRepository: UserRepository;
+let mockUserModel: MockModelStatic<IUser>;
+
+beforeEach(() => {
+  mockUserModel = {
+    findOne: jest.fn(),
+    findByPk: jest.fn(),
+    findAll: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    destroy: jest.fn(),
+    prototype: {} as IUser,
+    tableName: "Users",
+    primaryKeyAttribute: "id",
+    primaryKeyAttributes: ["id"],
+  } as unknown as MockModelStatic<IUser>;
+
+  jest.spyOn(console, "error").mockImplementation(() => {});
+  userRepository = new UserRepository(mockUserModel);
+  jest.clearAllMocks();
+});
 
 describe("UserRepository", () => {
-  let userRepository: UserRepository;
-  let mockUserModel: jest.Mocked<ModelStatic<IUser>>;
-
-  beforeEach(() => {
-    mockUserModel = User as jest.Mocked<ModelStatic<IUser>>;
-    userRepository = new UserRepository(mockUserModel);
-    jest.spyOn(console, "error").mockImplementation(() => {});
-  });
-
   describe("Queries", () => {
     describe("findByEmail", () => {
       it("should return a user by email", async () => {
@@ -196,7 +215,6 @@ describe("UserRepository", () => {
       });
     });
 
-    // TODO
     describe("delete", () => {
       it("should delete a user", async () => {
         const userId = "1234";
