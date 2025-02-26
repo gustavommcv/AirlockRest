@@ -10,7 +10,7 @@ export interface IUserReader {
 
 export interface IUserWriter {
   create(user: userDtoRequest): Promise<userDtoResponse>;
-  edit(user: IUser): Promise<IUser>;
+  edit(id: string, updatedData: Partial<userDtoRequest>): Promise<IUser>;
   delete(id: string): Promise<void>;
 }
 

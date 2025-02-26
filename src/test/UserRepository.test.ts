@@ -161,26 +161,53 @@ describe("UserRepository", () => {
     });
 
     describe("edit", () => {
-      it("should throw an error as method is not implemented", async () => {
-        const mockUser = {
-          id: "1234",
-          username: "John Doe",
-          email: "john@example.com",
+      it("should update a user and return a userDtoResponse", async () => {
+        const userId = "1234";
+        const updatedData: Partial<userDtoRequest> = {
+          username: "John Updated",
+          email: "john.updated@example.com",
+        };
+
+        const mockUpdatedUser = {
+          id: userId,
+          username: updatedData.username,
+          email: updatedData.email,
           password: "hashedpassword",
           role: "guest",
         } as IUser;
 
-        await expect(userRepository.edit(mockUser)).rejects.toThrow(
-          "Method not implemented."
+        const expectedUserDtoResponse = new userDtoResponse(
+          mockUpdatedUser.id,
+          mockUpdatedUser.username,
+          mockUpdatedUser.email,
+          mockUpdatedUser.role
         );
+
+        mockUserModel.update.mockResolvedValue([1]);
+        mockUserModel.findByPk.mockResolvedValue(mockUpdatedUser);
+
+        const result = await userRepository.edit(userId, updatedData);
+
+        expect(mockUserModel.update).toHaveBeenCalledWith(updatedData, {
+          where: { id: userId },
+        });
+        expect(mockUserModel.findByPk).toHaveBeenCalledWith(userId);
+        expect(result).toEqual(expectedUserDtoResponse);
       });
     });
 
+    // TODO
     describe("delete", () => {
-      it("should throw an error as method is not implemented", async () => {
-        await expect(userRepository.delete("1234")).rejects.toThrow(
-          "Method not implemented."
-        );
+      it("should delete a user", async () => {
+        const userId = "1234";
+
+        mockUserModel.destroy.mockResolvedValue(1);
+
+        await userRepository.delete(userId);
+
+        expect(mockUserModel.destroy).toHaveBeenCalledWith({
+          where: { id: userId },
+        });
       });
     });
   });

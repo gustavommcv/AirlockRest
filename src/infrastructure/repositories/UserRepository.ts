@@ -52,7 +52,7 @@ export default class UserRepository implements IUserRepository {
     }
   }
 
-  async edit(user: IUser): Promise<IUser> {
+  async edit(id: string, updatedData: Partial<userDtoRequest>): Promise<IUser> {
     throw new Error("Method not implemented.");
   }
 

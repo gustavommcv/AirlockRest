@@ -1,3 +1,4 @@
+import { listingDtoRequest } from "../../application/dtos/listingDtoRequest";
 import listingDtoResponse from "../../application/dtos/listingDtoResponse";
 
 export interface IListingReader {
@@ -6,8 +7,8 @@ export interface IListingReader {
 }
 
 export interface IListingWriter {
-  create(): Promise<listingDtoResponse>;
-  edit(): Promise<listingDtoResponse>;
+  create(listing: listingDtoRequest): Promise<listingDtoResponse>;
+  edit(id: string, updatedData: Partial<listingDtoRequest>): Promise<listingDtoResponse>;
   delete(id: string): Promise<void>;
 }
 

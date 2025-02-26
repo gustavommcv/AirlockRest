@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import bcrypt from "bcrypt";
 
 import { IUserRepository } from "../../domain/respositoryContracts/IUserRepository";
