@@ -1,3 +1,4 @@
+import "../../database/models/associations";
 import { Router, Request, Response } from "express";
 import userRouter from "./userRouter";
 import authRouter from "./authRouter";

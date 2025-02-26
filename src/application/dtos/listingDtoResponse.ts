@@ -1,4 +1,4 @@
-class listingDtoResponse {
+export default class listingDtoResponse {
   id: string;
   title: string;
   description: string | null;
@@ -15,6 +15,11 @@ class listingDtoResponse {
     username: string;
     email: string;
   };
+  amenities: Array<{
+    id: string;
+    name: string;
+    category: string;
+  }>;
   createdAt: Date;
 
   constructor(
@@ -30,7 +35,8 @@ class listingDtoResponse {
     longitude: number | null,
     closedForBookings: boolean,
     host: { id: string; username: string; email: string },
-    createdAt: Date
+    createdAt: Date,
+    amenities: Array<{ id: string; name: string; category: string }> = []
   ) {
     this.id = id;
     this.title = title;
@@ -44,8 +50,7 @@ class listingDtoResponse {
     this.longitude = longitude;
     this.closedForBookings = closedForBookings;
     this.host = host;
+    this.amenities = amenities;
     this.createdAt = createdAt;
   }
 }
-
-export default listingDtoResponse;

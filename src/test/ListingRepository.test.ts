@@ -44,10 +44,10 @@ beforeEach(() => {
 describe("Listing Repository", () => {
   describe("Queries", () => {
     describe("Get Listing by id", () => {
-      it("Should return a listingDtoResponse that matches with the providade Id", async () => {
+      it("Should return a listingDtoResponse that matches with the provided Id", async () => {
         const id = "1234";
 
-        const sequelizeResponse = {
+        const l1 = {
           id: "1234",
           title: "Casa na Praia",
           description: "Uma bela casa na praia com vista para o mar.",
@@ -69,8 +69,13 @@ describe("Listing Repository", () => {
           email: "host@example.com",
         };
 
+        // Include the associated user in the response
+        const sequelizeResponse = {
+          ...l1,
+          user: mockHost,
+        };
+
         mockListingModel.findByPk.mockResolvedValue(sequelizeResponse);
-        mockUserModel.findByPk.mockResolvedValue(mockHost);
 
         const repositoryResponse = await listingRepository.findById(id);
 
@@ -86,18 +91,14 @@ describe("Listing Repository", () => {
           sequelizeResponse.latitude || null,
           sequelizeResponse.longitude || null,
           sequelizeResponse.closedForBookings || false,
-          {
-            id: sequelizeResponse.hostId,
-            username: "username",
-            email: "email@example.com",
-          },
+          mockHost,
           sequelizeResponse.createdAt
         );
 
         expect(repositoryResponse).toEqual(expectedResponse);
-        expect(mockListingModel.findByPk).toHaveBeenCalledWith(id);
-        expect(mockUserModel.findByPk).toHaveBeenCalledWith(
-          sequelizeResponse.hostId
+        expect(mockListingModel.findByPk).toHaveBeenCalledWith(
+          id,
+          expect.anything()
         );
       });
     });
@@ -137,8 +138,6 @@ describe("Listing Repository", () => {
           createdAt: new Date(),
         } as IListing;
 
-        const sequelizeResponse = [l1, l2];
-
         const mockHost1 = {
           id: "12345",
           username: "host_user",
@@ -151,12 +150,19 @@ describe("Listing Repository", () => {
           email: "another@example.com",
         };
 
+        // Include the associated user in the response
+        const sequelizeResponse = [
+          {
+            ...l1,
+            user: mockHost1,
+          },
+          {
+            ...l2,
+            user: mockHost2,
+          },
+        ];
+
         mockListingModel.findAll.mockResolvedValue(sequelizeResponse);
-        mockUserModel.findByPk.mockImplementation((id) => {
-          if (id === "12345") return Promise.resolve(mockHost1);
-          if (id === "xyz") return Promise.resolve(mockHost2);
-          return Promise.resolve(null);
-        });
 
         const repositoryResponse = await listingRepository.getAll();
 
@@ -174,7 +180,7 @@ describe("Listing Repository", () => {
               listing.latitude || null,
               listing.longitude || null,
               listing.closedForBookings || false,
-              listing.hostId === "12345" ? mockHost1 : mockHost2,
+              listing.user,
               listing.createdAt
             )
         );
