@@ -27,4 +27,11 @@ export default class ListingController {
       }
     }
   }
+
+  public async postListing(request: Request, response: Response) {
+    response.json({
+      message: "At post listing!",
+      user: request.user,
+    });
+  }
 }
