@@ -8,7 +8,7 @@ export default function validationErrors(
 ) {
   const errors = validationResult(request);
   if (!errors.isEmpty()) {
-    response.status(400).json({ errros: errors.array() });
+    response.status(400).json({ errors: errors.array() });
     return;
   }
 

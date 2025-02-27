@@ -15,6 +15,10 @@ import IListingRepository from "./domain/respositoryContracts/IListingRepository
 import ListingRepository from "./infrastructure/repositories/ListingRepository";
 import { IListingService } from "./domain/serviceContracts/IListingService";
 import ListingService from "./application/services/ListingService";
+import { IAmenity } from "./domain/entities/IAmenity";
+import Amenity from "./infrastructure/database/models/Amenity";
+import { IListingAmenity } from "./domain/entities/IListingAmenity";
+import ListingAmenity from "./infrastructure/database/models/ListingAmenity";
 
 container.register("AuthController", { useClass: AuthController });
 container.register("UserController", { useClass: UserController });
@@ -23,6 +27,12 @@ container.register("ListingController", { useClass: ListingController });
 container.register<ModelStatic<IUser>>("UserModel", { useValue: User });
 container.register<ModelStatic<IListing>>("ListingModel", {
   useValue: Listing,
+});
+container.register<ModelStatic<IAmenity>>("AmenityModel", {
+  useValue: Amenity,
+});
+container.register<ModelStatic<IListingAmenity>>("ListingAmenityModel", {
+  useValue: ListingAmenity,
 });
 
 container.register<IUserRepository>("IUserRepository", {

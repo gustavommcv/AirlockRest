@@ -6,12 +6,17 @@ import { ModelStatic } from "sequelize";
 import { IListing } from "../../domain/entities/IListing";
 import { IUser } from "../../domain/entities/IUser";
 import Amenity from "../database/models/Amenity";
+import { IAmenity } from "../../domain/entities/IAmenity";
+import { IListingAmenity } from "../../domain/entities/IListingAmenity";
 
 @injectable()
 export default class ListingRepository implements IListingRepository {
   constructor(
     @inject("ListingModel") private listingModel: ModelStatic<IListing>,
-    @inject("UserModel") private userModel: ModelStatic<IUser>
+    @inject("UserModel") private userModel: ModelStatic<IUser>,
+    @inject("AmenityModel") private amenityModel: ModelStatic<IAmenity>,
+    @inject("ListingAmenityModel")
+    private listingAmenityModel: ModelStatic<IListingAmenity>
   ) {}
 
   async findById(id: string): Promise<listingDtoResponse | null> {

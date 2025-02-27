@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { CustomError } from "../../../shared/errors/CustomError";
 import { inject, injectable } from "tsyringe";
 import { IListingService } from "../../../domain/serviceContracts/IListingService";
+import { matchedData } from "express-validator";
+import { listingDtoRequest } from "../../../application/dtos/listingDtoRequest";
 
 @injectable()
 export default class ListingController {
@@ -29,9 +31,32 @@ export default class ListingController {
   }
 
   public async postListing(request: Request, response: Response) {
+    const listing = matchedData(request);
+
+    if (!request.user?.id) {
+      response.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const listingRequest = new listingDtoRequest(
+      listing.title,
+      listing.description,
+      listing.costPerNight,
+      listing.locationType,
+      listing.numOfBeds,
+      listing.photoThumbnail,
+      listing.isFeatured,
+      listing.latitude,
+      listing.longitude,
+      listing.closedForBookings,
+      request.user?.id,
+      listing.amenities
+    );
+
     response.json({
       message: "At post listing!",
       user: request.user,
+      listingRequest: listingRequest,
     });
   }
 }

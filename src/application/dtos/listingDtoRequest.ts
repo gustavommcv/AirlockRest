@@ -1,3 +1,8 @@
+interface IAmenityRequest {
+  category: string; // VARCHAR(30)
+  name: string; // VARCHAR(30)
+}
+
 export class listingDtoRequest {
   title: string;
   description: string | null;
@@ -10,6 +15,7 @@ export class listingDtoRequest {
   longitude: number | null;
   closedForBookings: boolean;
   hostId: string;
+  amenities: IAmenityRequest[];
 
   constructor(
     title: string,
@@ -22,7 +28,8 @@ export class listingDtoRequest {
     latitude: number | null,
     longitude: number | null,
     closedForBookings: boolean,
-    hostId: string
+    hostId: string,
+    amenities: IAmenityRequest[]
   ) {
     this.title = title;
     this.description = description;
@@ -35,5 +42,6 @@ export class listingDtoRequest {
     this.longitude = longitude;
     this.closedForBookings = closedForBookings;
     this.hostId = hostId;
+    this.amenities = amenities;
   }
 }
