@@ -5,6 +5,8 @@ import listingDtoResponse from "../application/dtos/listingDtoResponse";
 import { listingDtoRequest } from "../application/dtos/listingDtoRequest";
 import { Model, ModelStatic } from "sequelize";
 import { IUser } from "../domain/entities/IUser";
+import { IAmenity } from "../domain/entities/IAmenity";
+import { IListingAmenity } from "../domain/entities/IListingAmenity";
 
 let listingRepository: ListingRepository;
 
@@ -36,8 +38,19 @@ const mockUserModel: MockModelStatic<IUser> = {
   primaryKeyAttributes: ["id"],
 } as unknown as MockModelStatic<IUser>;
 
+const mockAmenityModel: MockModelStatic<IAmenity> =
+  {} as unknown as MockModelStatic<IAmenity>;
+
+const mockListingAmenityModel: MockModelStatic<IListingAmenity> =
+  {} as unknown as MockModelStatic<IListingAmenity>;
+
 beforeEach(() => {
-  listingRepository = new ListingRepository(mockListingModel, mockUserModel);
+  listingRepository = new ListingRepository(
+    mockListingModel,
+    mockUserModel,
+    mockAmenityModel,
+    mockListingAmenityModel
+  );
   jest.clearAllMocks();
 });
 
@@ -205,7 +218,8 @@ describe("Listing Repository", () => {
           -23.5505,
           -46.6333,
           false,
-          "12345"
+          "12345",
+          []
         );
 
         const sequelizeResponse = {
